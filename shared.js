@@ -9,7 +9,7 @@ const UI_COMPONENTS = {
     header: `
         <div class="header-container">
           <a href="GTH.html" class="header-logo">
-            <img src="logo.jpg" style="height: 50px; width: auto; border-radius: 12px;">
+            <img src="logo.jpg" style="height: 75px; width: auto; border-radius: 12px;">
         </a>
             <div class="header-links">
                 <a href="GTH.html">الرئيسية</a>

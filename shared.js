@@ -8,7 +8,9 @@ const API_URL = "https://gth-server.onrender.com";
 const UI_COMPONENTS = {
     header: `
         <div class="header-container">
-            <a href="GTH.html" class="header-logo">الجدول الذكي</a>
+          <a href="GTH.html" class="header-logo">
+            <img src="logo.png" alt="الجدول الذكي" style="height: 50px; width: auto; border-radius: 12px;">
+        </a>
             <div class="header-links">
                 <a href="GTH.html">الرئيسية</a>
                 <a href="GTH1.html">الجدول</a>

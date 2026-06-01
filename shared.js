@@ -220,8 +220,14 @@ async function submitRegister() {
 
     setButtonLoading('regBtn', true, 'تأكيد التسجيل');
     try {
-        const res = await fetch(`${API_URL}/reg`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-        if(res.status === 201) {
+        const res = await fetch(`${API_URL}/reg`, { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify(data) 
+        });
+        
+        // هنا قمنا بتغيير الشرط من 201 إلى 200
+        if(res.status === 200) {
             currentEmail = data.email;
             otpContext = 'register';
             closeModals();
@@ -230,35 +236,16 @@ async function submitRegister() {
             startOTPTimer();
         } else {
             const txt = await res.text();
-            if(txt === 'Taken') alert("عذراً، هذا الإيميل مسجل مسبقاً.");
-            else if(txt === 'InvalidTeacherCode') alert("الكود السري للمعلم غير صحيح.");
-            else if(txt === 'InvalidAdminCode') alert("الكود السري للإدارة غير صحيح.");
-            else alert("خطأ في البيانات، يرجى التأكد.");
+            console.error("رد السيرفر عند الخطأ:", txt); // مفيد جداً لمعرفة سبب الرفض
+            if(txt === 'الإيميل مسجل مسبقاً') alert("عذراً، هذا الإيميل مسجل مسبقاً ومفعل.");
+            else alert("خطأ من السيرفر: " + txt);
         }
-    } catch(e) { alert("فشل الاتصال بالخادم."); }
+    } catch(e) { 
+        console.error("خطأ الاتصال:", e);
+        alert("فشل الاتصال بالخادم."); 
+    }
     finally { setButtonLoading('regBtn', false, 'تأكيد التسجيل'); }
 }
-
-async function submitLogin() {
-    const email = document.getElementById('loginEmail').value.toLowerCase().trim();
-    const pword = document.getElementById('loginPword').value;
-    if(!email || !pword) return alert("الرجاء إدخال الإيميل وكلمة المرور.");
-
-    setButtonLoading('loginBtn', true, 'دخول');
-    try {
-        const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email, pword }) });
-        if(res.status === 200) {
-            currentEmail = email;
-            otpContext = 'login';
-            closeModals();
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('otpModal').style.display = 'block';
-            startOTPTimer();
-        } else alert("بيانات الدخول غير صحيحة.");
-    } catch(e) { alert("فشل الاتصال بالخادم."); }
-    finally { setButtonLoading('loginBtn', false, 'دخول'); }
-}
-
 async function submitForgotPassword() {
     // استخدمنا toLowerCase() و trim() لضمان التطابق مع قاعدة البيانات
     const email = document.getElementById('forgotEmail').value.toLowerCase().trim();

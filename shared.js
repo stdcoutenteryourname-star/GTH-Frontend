@@ -205,6 +205,44 @@ function setButtonLoading(btnId, isLoading, originalText) {
 // ==========================================
 // مسارات المصادقة (التسجيل، الدخول، استعادة المرور)
 // ==========================================
+async function submitRegister() {
+    const data = {
+        role: document.getElementById('regRole').value,
+        email: document.getElementById('regEmail').value.toLowerCase().trim(),
+        fullName: document.getElementById('regFullName').value,
+        schoolId: document.getElementById('regSchool').value,
+        section: document.getElementById('regSection').value,
+        secretCode: document.getElementById('regSecretCode').value,
+        pword: document.getElementById('regPword').value
+    };
+
+    if(!data.email || !data.pword || !data.fullName) return alert("الرجاء إكمال البيانات الأساسية.");
+
+    setButtonLoading('regBtn', true, 'تأكيد التسجيل');
+    try {
+        const res = await fetch(`${API_URL}/reg`, { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify(data) 
+        });
+        
+        if(res.status === 200) {
+            currentEmail = data.email;
+            otpContext = 'register';
+            closeModals();
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('otpModal').style.display = 'block';
+            startOTPTimer();
+        } else {
+            const txt = await res.text();
+            alert("خطأ: " + txt);
+        }
+    } catch(e) { 
+        alert("فشل الاتصال بالخادم."); 
+    }
+    finally { setButtonLoading('regBtn', false, 'تأكيد التسجيل'); }
+}
+
 async function submitLogin() {
     const email = document.getElementById('loginEmail').value.toLowerCase().trim();
     const pword = document.getElementById('loginPword').value;

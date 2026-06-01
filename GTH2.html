@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عن المنصة - الجدول المدرسي الذكي</title>
+    <link rel="stylesheet" href="GHTs.css">
+    <style>
+        /* تنسيقات خاصة بصفحة (عن المنصة) */
+        .about-section {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border-top: 5px solid var(--primary-blue);
+        }
+        
+        .about-title {
+            color: var(--primary-blue);
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 10px;
+        }
+        
+        .about-text {
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .team-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #EAEDED;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary-blue);
+        }
+
+        .member-name {
+            color: var(--primary-blue);
+            font-size: 16px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .member-role {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. منطقة حقن الهيدر التلقائي -->
+    <div id="header-placeholder"></div>
+    
+    <!-- 2. منطقة حقن النوافذ المنبثقة التلقائية -->
+    <div id="modals-placeholder"></div>
+
+    <!-- 3. محتوى الصفحة -->
+    <main style="padding: 30px 5%; min-height: 70vh;">
+        
+        <!-- قسم المعلومات -->
+        <div class="about-section">
+            <h2 class="about-title">ماهي منصة الجدول المدرسي الذكي؟</h2>
+            <p class="about-text">هي منصة غير ربحية تهدف إلى خدمة المجتمع التعليمي وتحسين تجربة الطالب والمعلم، من خلال دمج التكنولوجيا بالتعليم لتوفير بيئة منظمة وخالية من التضاربات.</p>
+            
+            <h2 class="about-title">رؤيتنا</h2>
+            <p class="about-text">نسعى إلى تخفيف العبء الدراسي عن الطلاب وتنظيم وقت المعلمين، ليكون لكل مدرسة جدول ذكي يضمن سير العملية التعليمية بسلاسة وراحة وبأعلى درجات الكفاءة.</p>
+            
+            <h2 class="about-title">المشكلة والحل</h2>
+            <p class="about-text" style="margin-bottom: 0;">تتراكم الاختبارات والواجبات والمشاريع غالباً في أسبوع واحد، مما يسبب تشتتاً كبيراً للطالب وضغطاً في التصحيح للمعلم. <strong>الجدول المدرسي الذكي</strong> جاء ليكون حلقة الوصل؛ حيث يتيح تنسيق المواعيد مسبقاً وتنبيه الطلاب قبلها بأيام لتوفير وقت كافٍ للمذاكرة والراحة.</p>
+        </div>
+
+        <!-- قسم فريق العمل -->
+        <div class="about-section" style="border-top-color: var(--secondary-blue);">
+            <h2 class="about-title" style="text-align: center; border: none;">فريق العمل والمساهمون</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="member-name">علي بوصبيح</div>
+                    <div class="member-role">عضو مؤسس</div>
+                </div>
+                <div class="team-card">
+                    <div class="member-name">حسين الناصر</div>
+                    <div class="member-role">عضو مؤسس</div>
+                </div>
+                <div class="team-card">
+                    <div class="member-name">عبد العزيز الدليلي</div>
+                    <div class="member-role">عضو مؤسس</div>
+                </div>
+                <div class="team-card">
+                    <div class="member-name">رضا غواص</div>
+                    <div class="member-role">عضو مؤسس</div>
+                </div>
+                <div class="team-card">
+                    <div class="member-name">عبدالهادي بوجبارة</div>
+                    <div class="member-role">عضو مؤسس</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 4. منطقة حقن التذييل التلقائي -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- 5. استدعاء ملف الأكواد المشتركة -->
+    <script src="shared.js"></script>
+
+</body>
+</html>

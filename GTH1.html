@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الجدول - منصة الجدول المدرسي الذكي</title>
+    <link rel="stylesheet" href="GHTs.css">
+    <style>
+        /* تنسيقات إضافية لضمان استقرار شكل التقويم */
+        .today-cell {
+            background-color: #E8F8F5 !important;
+            border: 2px solid var(--success) !important;
+        }
+        .today-text {
+            color: var(--success);
+            font-size: 10px;
+            display: block;
+            font-weight: bold;
+        }
+        .task-badge {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 5px;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+        .checkbox-wrapper {
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #D5D8DC;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .checkbox-wrapper:hover { background: #EBF5FB; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div id="modals-placeholder"></div>
+
+    <main style="padding: 20px 5%; min-height: 60vh;">
+        
+        <div class="calendar-header">
+            <div class="nav-buttons">
+                <button class="btn btn-primary" onclick="changeYear(1)">سنة تالية &raquo;</button>
+                <button class="btn btn-outline" style="color:var(--primary-blue); border-color:var(--primary-blue);" onclick="changeMonth(1)">شهر تالي &rsaquo;</button>
+            </div>
+            <div style="text-align: center;">
+                <h2 class="month-title" id="monthYearDisplay" style="margin: 0;"></h2>
+                <button class="btn btn-outline" style="padding: 2px 10px; font-size: 12px; margin-top: 5px;" onclick="goToToday()">العودة لليوم</button>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-outline" style="color:var(--primary-blue); border-color:var(--primary-blue);" onclick="changeMonth(-1)">&lsaquo; شهر سابق</button>
+                <button class="btn btn-primary" onclick="changeYear(-1)">&laquo; سنة سابقة</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="tab" id="calendarTable">
+                <thead>
+                    <tr>
+                        <th>الأحد</th><th>الإثنين</th><th>الثلاثاء</th><th>الأربعاء</th><th>الخميس</th><th>الجمعة</th><th>السبت</th>
+                    </tr>
+                </thead>
+                <tbody id="calendarBody"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="auth-modal" id="taskModal">
+        <h3>إضافة مهمة جديدة</h3>
+        <p id="selectedDateText" style="text-align: center; color: var(--danger); font-weight: bold; margin-bottom: 10px; font-size: 14px;"></p>
+        
+        <div style="background: var(--bg-light); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <strong style="font-size:13px; color:var(--text-dark);">حدد الشعب الموجهة لها المهمة:</strong>
+                <div>
+                    <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:11px;" onclick="toggleAllSections(true)">تحديد الكل</button>
+                    <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:11px;" onclick="toggleAllSections(false)">إلغاء</button>
+                </div>
+            </div>
+            <div id="taskSectionCheckboxes" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        </div>
+
+        <select class="form-control" id="taskType" onchange="toggleStudyPlan()">
+            <option value="واجب">واجب</option>
+            <option value="بحث">بحث</option>
+            <option value="اختبار">اختبار</option>
+        </select>
+
+        <input type="text" class="form-control" id="taskTitle" placeholder="عنوان المهمة (مثال: اختبار رياضيات)">
+        
+        <div style="display: flex; gap: 10px;">
+            <div style="flex:1;">
+                <label style="font-size:12px; color:var(--text-muted);">تاريخ البدء:</label>
+                <input type="date" class="form-control" id="taskFromDate">
+            </div>
+            <div style="flex:1;">
+                <label style="font-size:12px; color:var(--text-muted);">تاريخ التسليم:</label>
+                <input type="date" class="form-control" id="taskToDate">
+            </div>
+        </div>
+
+        <textarea class="form-control" id="taskDesc" placeholder="وصف المهمة أو التعليمات (اختياري)..." rows="3"></textarea>
+        <textarea class="form-control" id="taskStudyPlan" placeholder="خطة المذاكرة المقترحة (تظهر في الاختبارات فقط)..." rows="2" style="display: none;"></textarea>
+
+        <button class="btn btn-success" style="width:100%; margin-bottom:10px;" id="saveTaskBtn" onclick="saveTask()">اعتماد ونشر المهمة</button>
+        <button class="btn btn-outline" style="width:100%; color:var(--text-dark); border-color:#BDC3C7;" onclick="closeTaskModal()">إلغاء</button>
+    </div>
+
+    <div class="auth-modal" id="viewTaskModal">
+        <h3 id="viewTaskType" style="margin-bottom: 5px; font-size: 16px;"></h3>
+        <h4 id="viewTaskTitle" style="text-align: center; margin-top: 0; color: var(--primary-blue);"></h4>
+        
+        <div style="background:#EBF5FB; padding:10px; border-radius:8px; margin-bottom:15px; text-align:center;">
+            <p id="viewTaskSection" style="margin:0; font-size: 13px; color: var(--secondary-blue); font-weight:bold; line-height:1.5;"></p>
+        </div>
+        
+        <p id="viewTaskDates" style="text-align: center; font-size: 13px; color: var(--danger); font-weight: bold;"></p>
+        
+        <div style="background: var(--bg-light); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: right;">
+            <strong style="color:var(--text-dark); font-size:13px;">الوصف:</strong>
+            <p id="viewTaskDesc" style="margin:5px 0 0 0; font-size: 14px; line-height: 1.6;"></p>
+        </div>
+        
+        <div id="viewTaskPlanContainer" style="background: #FEF9E7; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: none; border: 1px solid #F1C40F; text-align: right;">
+            <strong style="color: #D35400; font-size: 13px;">خطة المذاكرة:</strong>
+            <p id="viewTaskPlan" style="margin:5px 0 0 0; font-size: 14px; line-height: 1.6;"></p>
+        </div>
+        
+        <p id="viewTaskTeacher" style="font-size: 12px; color: var(--text-muted); text-align: center;"></p>
+
+        <button class="btn btn-danger" id="deleteTaskBtn" style="width: 100%; margin-bottom: 10px; display: none;">إلغاء وحذف المهمة نهائياً</button>
+        <button class="btn btn-outline" style="width: 100%; color: var(--text-dark); border-color: #BDC3C7;" onclick="closeTaskModal()">إغلاق</button>
+    </div>
+
+    <div class="auth-modal" id="notifModal">
+        <h3>التنبيهات والمهام القادمة</h3>
+        <div id="notifList" style="max-height: 250px; overflow-y: auto; background: var(--bg-light); padding: 15px; border-radius: 8px; margin-bottom:15px; font-size:14px;"></div>
+        <div style="border-top: 1px solid #EAEDED; padding-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+            <label style="font-size: 13px; color:var(--text-dark);">التذكير قبل (أيام): </label>
+            <input type="number" id="reminderDaysInput" value="3" min="0" max="30" class="form-control" style="width: 80px; margin-bottom:0; text-align:center; padding:5px;">
+            <button class="btn btn-primary" onclick="saveReminderSettings()" style="padding: 5px 15px;">حفظ</button>
+        </div>
+        <button class="btn btn-outline" style="width: 100%; margin-top: 15px; color: var(--text-dark); border-color: #BDC3C7;" onclick="closeTaskModal()">إغلاق</button>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    
+    <script src="shared.js"></script>
+    <script>
+        const monthNames = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+        const todayDateObj = new Date();
+        const preciseToday = `${todayDateObj.getFullYear()}-${String(todayDateObj.getMonth() + 1).padStart(2, '0')}-${String(todayDateObj.getDate()).padStart(2, '0')}`;
+        
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth(); 
+        let currentYear = currentDate.getFullYear();
+        let selectedDateForTask = "";
+        let allCurrentTasks = [];
+
+        // ==========================================
+        // 1. التقويم المستقر
+        // ==========================================
+        function renderCalendar(month, year) {
+            const calendarBody = document.getElementById("calendarBody");
+            document.getElementById("monthYearDisplay").innerText = `${monthNames[month]} ${year}`;
+            calendarBody.innerHTML = "";
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let dateCounter = 1;
+
+            for (let i = 0; i < 6; i++) {
+                let row = document.createElement("tr");
+                for (let j = 0; j < 7; j++) {
+                    let cell = document.createElement("td");
+                    if (i === 0 && j < firstDay) {
+                        cell.innerHTML = "";
+                    } else if (dateCounter > daysInMonth) {
+                        cell.innerHTML = "";
+                    } else {
+                        let m = String(month + 1).padStart(2, '0');
+                        let d = String(dateCounter).padStart(2, '0');
+                        const preciseDate = `${year}-${m}-${d}`;
+                        
+                        let isToday = (preciseDate === preciseToday);
+                        let todayHTML = isToday ? `<span class="today-text">اليوم</span>` : '';
+                        if(isToday) cell.classList.add('today-cell');
+
+                        cell.innerHTML = `
+                            <div class="date-number" style="${isToday ? 'background:var(--success);' : ''}">${dateCounter}</div>
+                            ${todayHTML}
+                            <div class="task-container" id="day-${preciseDate}"></div>
+                        `;
+                        cell.onclick = () => onDayClick(preciseDate);
+                        dateCounter++;
+                    }
+                    row.appendChild(cell);
+                }
+                calendarBody.appendChild(row);
+                if (dateCounter > daysInMonth) break;
+            }
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; } 
+            else if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar(currentMonth, currentYear);
+            setTimeout(renderTasksOnCalendar, 50);
+        }
+
+        function changeYear(direction) {
+            currentYear += direction;
+            renderCalendar(currentMonth, currentYear);
+            setTimeout(renderTasksOnCalendar, 50);
+        }
+
+        function goToToday() {
+            currentMonth = todayDateObj.getMonth();
+            currentYear = todayDateObj.getFullYear();
+            renderCalendar(currentMonth, currentYear);
+            setTimeout(renderTasksOnCalendar, 50);
+        }
+
+        // ==========================================
+        // 2. إدارة المهام (إضافة وتحديد الشعب)
+        // ==========================================
+        function onDayClick(date) {
+            const savedUser = localStorage.getItem('user_info');
+            if(!savedUser) return alert("الرجاء تسجيل الدخول لتتمكن من التفاعل.");
+            const user = JSON.parse(savedUser);
+
+            if (user.role === 'teacher') {
+                selectedDateForTask = date; 
+                document.getElementById('selectedDateText').innerText = " تاريخ المهمة: " + date;
+                
+                // تصفير الحقول
+                document.getElementById('taskTitle').value = "";
+                document.getElementById('taskDesc').value = "";
+                document.getElementById('taskStudyPlan').value = "";
+                document.getElementById('taskFromDate').value = date;
+                document.getElementById('taskToDate').value = date;
+
+                // بناء مربعات الاختيار للشعب
+                const sectionDiv = document.getElementById('taskSectionCheckboxes');
+                sectionDiv.innerHTML = "";
+                
+                if(!user.teacherSections || user.teacherSections.length === 0) {
+                    sectionDiv.innerHTML = `<span style="color:var(--danger); font-size:12px; padding:10px;">عذراً، لم يقم الإداري بإسناد أي شعبة لك حتى الآن.</span>`;
+                    document.getElementById('saveTaskBtn').disabled = true;
+                } else {
+                    user.teacherSections.forEach(sec => {
+                        sectionDiv.innerHTML += `
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" class="task-sec-chk" value="${sec}"> ${sec}
+                            </label>
+                        `;
+                    });
+                    document.getElementById('saveTaskBtn').disabled = false;
+                }
+
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('taskModal').style.display = 'block';
+            }
+        }
+
+        function toggleAllSections(check) {
+            document.querySelectorAll('.task-sec-chk').forEach(cb => cb.checked = check);
+        }
+
+        function toggleStudyPlan() {
+            const taskType = document.getElementById('taskType').value;
+            document.getElementById('taskStudyPlan').style.display = (taskType === 'اختبار') ? 'block' : 'none';
+        }
+
+        async function saveTask() {
+            const user = JSON.parse(localStorage.getItem('user_info'));
+            const checkedBoxes = document.querySelectorAll('.task-sec-chk:checked');
+            const selectedSections = Array.from(checkedBoxes).map(cb => cb.value);
+
+            if(selectedSections.length === 0) return alert("الرجاء تحديد شعبة واحدة على الأقل لنشر المهمة.");
+            const title = document.getElementById('taskTitle').value.trim();
+            if(!title) return alert("الرجاء كتابة عنوان للمهمة.");
+
+            const taskData = {
+                schoolId: user.schoolId,
+                teacherName: user.fullName,
+                week: "الأسبوع الحالي",  
+                day: selectedDateForTask, 
+                section: selectedSections, // مصفوفة الشعب
+                taskType: document.getElementById('taskType').value,
+                title: title,
+                description: document.getElementById('taskDesc').value,
+                fromDate: document.getElementById('taskFromDate').value,
+                toDate: document.getElementById('taskToDate').value,
+                studyPlan: document.getElementById('taskStudyPlan').value
+            };
+
+            const btn = document.getElementById('saveTaskBtn');
+            btn.innerText = " جاري الاعتماد...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/add-task`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(taskData)
+                });
+                
+                if (response.status === 201) {
+                    closeTaskModal();
+                    fetchTasks(); 
+                } else {
+                    alert("حدث خطأ في النظام، لم يتم حفظ المهمة.");
+                }
+            } catch(error) { alert("فشل الاتصال بالخادم."); } 
+            finally { btn.innerText = "اعتماد ونشر المهمة"; btn.disabled = false; }
+        }
+
+        // ==========================================
+        // 3. جلب وعرض المهام
+        // ==========================================
+        async function fetchTasks() {
+            const savedUser = localStorage.getItem('user_info');
+            if(!savedUser) return;
+            const user = JSON.parse(savedUser);
+
+            try {
+                const response = await fetch(`${API_URL}/get-tasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ schoolId: user.schoolId, role: user.role, section: user.section, teacherSections: user.teacherSections })
+                });
+
+                if (response.ok) {
+                    allCurrentTasks = await response.json();
+                    renderTasksOnCalendar(); 
+                    if(user.role === 'student' || user.role === 'teacher') checkNotifications(); 
+                }
+            } catch(error) { console.error("Fetch Error:", error); }
+        }
+
+        function renderTasksOnCalendar() {
+            document.querySelectorAll('.task-badge').forEach(el => el.remove());
+            
+            allCurrentTasks.forEach(task => {
+                const cell = document.getElementById(`day-${task.day}`);
+                if (cell) {
+                    let bgColor = task.taskType === 'اختبار' ? 'var(--danger)' : (task.taskType === 'واجب' ? 'var(--warning)' : 'var(--primary-blue)');
+                    const taskStr = encodeURIComponent(JSON.stringify(task));
+                    
+                    // اقتطاع العنوان الطويل لكي لا يشوه الجدول
+                    let displayTitle = task.title.length > 18 ? task.title.substring(0, 18) + '..' : task.title;
+                    
+                    const taskHTML = `<div class="task-badge" title="${task.title}" onclick="event.stopPropagation(); openViewTask('${taskStr}')" style="background-color: ${bgColor};">${task.taskType}: ${displayTitle}</div>`;
+                    cell.innerHTML += taskHTML;
+                }
+            });
+        }
+
+        function openViewTask(taskStr) {
+            const task = JSON.parse(decodeURIComponent(taskStr));
+            const user = JSON.parse(localStorage.getItem('user_info'));
+            
+            document.getElementById('viewTaskType').innerText = "📌 " + task.taskType;
+            document.getElementById('viewTaskTitle').innerText = task.title;
+            
+            // معالجة ذكية: إذا كانت مصفوفة أو نص عادي (للتوافق مع البيانات القديمة والجديدة)
+            let sectionsText = Array.isArray(task.section) ? task.section.join(' ، ') : task.section;
+            document.getElementById('viewTaskSection').innerText = "موجهة لشعبة: ( " + sectionsText + " )";
+            
+            const from = task.fromDate ? task.fromDate.split('T')[0] : 'غير محدد';
+            const to = task.toDate ? task.toDate.split('T')[0] : 'غير محدد';
+            document.getElementById('viewTaskDates').innerText = `تبدأ: ${from} ◀ تنتهي: ${to}`;
+            document.getElementById('viewTaskDesc').innerText = task.description || "لا توجد تفاصيل إضافية.";
+            
+            const planContainer = document.getElementById('viewTaskPlanContainer');
+            if(task.taskType === 'اختبار' && task.studyPlan) {
+                document.getElementById('viewTaskPlan').innerText = task.studyPlan;
+                planContainer.style.display = 'block';
+            } else {
+                planContainer.style.display = 'none';
+            }
+            
+            document.getElementById('viewTaskTeacher').innerText = "بواسطة المعلم: " + task.teacherName;
+
+            const deleteBtn = document.getElementById('deleteTaskBtn');
+            if(user.role === 'teacher' && user.fullName === task.teacherName) {
+                deleteBtn.style.display = 'block';
+                deleteBtn.onclick = () => deleteTask(task._id);
+            } else { deleteBtn.style.display = 'none'; }
+            
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('viewTaskModal').style.display = 'block';
+        }
+
+        async function deleteTask(taskId) {
+            if(!confirm("تأكيد حذف المهمة نهائياً من جميع الشعب؟")) return;
+            try {
+                const res = await fetch(`${API_URL}/delete-task`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ taskId })
+                });
+                if(res.status === 200) { closeTaskModal(); fetchTasks(); }
+            } catch(e) { alert("فشل الاتصال بالخادم."); }
+        }
+
+        // ==========================================
+        // 4. التنبيهات
+        // ==========================================
+        function openNotifications() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('notifModal').style.display = 'block';
+        }
+
+        function checkNotifications() {
+            let reminderDays = parseInt(localStorage.getItem('reminder_days')) || 3;
+            document.getElementById('reminderDaysInput').value = reminderDays;
+            let today = new Date(); today.setHours(0,0,0,0);
+            let notifHtml = ''; let notifCount = 0;
+
+            allCurrentTasks.forEach(task => {
+                let taskDate = new Date(task.day);
+                let diffDays = Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24));
+
+                if (diffDays >= 0 && diffDays <= reminderDays) {
+                    let urgencyColor = diffDays === 0 ? 'var(--danger)' : (diffDays === 1 ? 'var(--warning)' : 'var(--text-dark)');
+                    let dayText = diffDays === 0 ? 'اليوم!' : (diffDays === 1 ? 'غداً' : `بعد ${diffDays} أيام`);
+                    let secsTxt = Array.isArray(task.section) ? task.section.join(',') : task.section;
+                    
+                    notifHtml += `<div style="border-bottom:1px solid #EAEDED; padding:12px 0; color:${urgencyColor}; font-weight:bold;">
+                        ⏳ ${task.taskType}: "${task.title}" <br>
+                        <span style="font-size:12px; color:var(--text-muted);">موجه لـ (${secsTxt}) | الموعد: ${dayText}</span>
+                    </div>`;
+                    notifCount++;
+                }
+            });
+
+            if (notifCount === 0) notifHtml = "<p style='text-align:center; color:var(--text-muted); padding:20px;'>لا توجد مهام قريبة، جدولك نظيف!</p>";
+            document.getElementById('notifList').innerHTML = notifHtml;
+            
+            const notifBtn = document.querySelector('.btn-notification');
+            if(notifBtn) notifBtn.innerText = notifCount > 0 ? `التنبيهات (${notifCount})` : `التنبيهات`;
+        }
+
+        function saveReminderSettings() {
+            localStorage.setItem('reminder_days', document.getElementById('reminderDaysInput').value);
+            alert("تم حفظ تفضيلات التنبيهات."); checkNotifications(); 
+        }
+
+        function closeTaskModal() {
+            document.querySelectorAll('.auth-modal').forEach(el => el.style.display = 'none');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // تشغيل الجدول فور فتح الصفحة
+        renderCalendar(currentMonth, currentYear);
+        setTimeout(fetchTasks, 500); 
+    </script>
+</body>
+</html>

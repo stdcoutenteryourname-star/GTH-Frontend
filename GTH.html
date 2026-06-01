@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - الجدول المدرسي الذكي</title>
+    <link rel="stylesheet" href="GHTs.css">
+    <style>
+        /* تنسيقات خاصة بالصفحة الرئيسية فقط */
+        .hero-section { 
+            text-align: center; 
+            padding: 60px 20px; 
+            background: var(--white); 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            margin-bottom: 40px; 
+            border-top: 5px solid var(--primary-blue);
+        }
+        
+        .hero-title { 
+            color: var(--primary-blue); 
+            font-size: 36px; 
+            margin-bottom: 15px; 
+            font-weight: 900;
+        }
+        
+        .hero-subtitle { 
+            color: var(--text-muted); 
+            font-size: 18px; 
+            line-height: 1.6; 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        
+        .features-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+        
+        .feature-card { 
+            background: var(--white); 
+            padding: 30px 20px; 
+            border-radius: 8px; 
+            text-align: center; 
+            border-bottom: 4px solid var(--secondary-blue); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .feature-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .feature-title { 
+            color: var(--primary-blue); 
+            font-size: 20px; 
+            margin-bottom: 12px; 
+        }
+
+        .feature-desc {
+            color: var(--text-muted); 
+            font-size: 14px; 
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+    
+    <div id="modals-placeholder"></div>
+
+    <main style="padding: 30px 5%; min-height: 70vh;">
+        
+        <div class="hero-section">
+            <h1 class="hero-title">الجدول المدرسي الذكي</h1>
+            <p class="hero-subtitle">نظام إلكتروني متكامل لإدارة المواعيد المدرسية، وتنظيم الواجبات والاختبارات بذكاء لمنع التضارب، وضمان أعلى مستويات الكفاءة للإدارة والمعلمين والطلاب.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3 class="feature-title">إدارة مركزية شاملة</h3>
+                <p class="feature-desc">تحكم كامل للمؤسسة التعليمية في إضافة الشعب وإدارتها بمرونة عالية، مع صلاحيات متقدمة للإدارة.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="feature-title">تنبيهات استباقية</h3>
+                <p class="feature-desc">نظام إشعارات تلقائي يضمن عدم تفويت الطلاب لأي اختبار أو واجب، مع إمكانية تخصيص وقت التذكير.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="feature-title">بيئة خالية من التضارب</h3>
+                <p class="feature-desc">تنظيم دقيق للمهام بين المعلمين داخل الشعبة الواحدة لضمان توزيع الجهد الأكاديمي بشكل عادل.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+    
+    <script src="shared.js"></script>
+
+</body>
+</html>

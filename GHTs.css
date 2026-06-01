@@ -1,0 +1,310 @@
+/* =========================================
+   1. المتغيرات والأساسيات (لوحة الألوان المؤسسية)
+   ========================================= */
+:root {
+    --primary-blue: #154360; /* أزرق داكن جداً (للهيدر والعناوين الرئيسية) */
+    --secondary-blue: #2980B9; /* أزرق مؤسسي (للأزرار الأساسية) */
+    --accent-blue: #5DADE2; /* أزرق فاتح (للتأثيرات عند مرور الماوس) */
+    --bg-light: #F4F6F7; /* لون خلفية الموقع (رمادي مائل للأزرق الفاتح جداً) */
+    --white: #FFFFFF;
+    --text-dark: #2C3E50; /* لون النصوص الأساسية (أكثر راحة للعين من الأسود) */
+    --text-muted: #7F8C8D; /* لون النصوص الفرعية */
+    --danger: #E74C3C; /* أحمر لزر الحذف أو الخروج */
+    --success: #27AE60; /* أخضر لزر الإضافة أو الحفظ */
+    --warning: #F39C12; /* برتقالي للمهام والواجبات */
+}
+
+* {
+    box-sizing: border-box;
+    /* إجبار الأرقام لتكون بالصيغة اللاتينية/الإنجليزية */
+    font-family: 'Tajawal', Arial, sans-serif; 
+    font-variant-numeric: tabular-nums lining-nums; 
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    direction: rtl; /* اتجاه الموقع من اليمين لليسار */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* لجعل التذييل في الأسفل دائماً */
+}
+
+/* =========================================
+   2. الهيدر (شريط التنقل العلوي) - حل التداخلات
+   ========================================= */
+.header-container {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.header-logo {
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 900;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.header-links {
+    display: flex;
+    gap: 20px;
+}
+
+.header-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    padding: 8px 8px; 
+}
+
+.header-links a:hover {
+    color: var(--accent-blue);
+}
+
+/* صندوق ملف المستخدم في الهيدر */
+.user-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* هذا السطر يمنع التداخل نهائياً */
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 18px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-info-text {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.user-name {
+    color: var(--white);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.user-details {
+    color: #D6EAF8;
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+/* =========================================
+   3. الأزرار والحقول الموحدة (UI Components)
+   ========================================= */
+.btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-primary { background-color: var(--secondary-blue); color: var(--white); }
+.btn-primary:hover { background-color: var(--primary-blue); }
+
+.btn-outline { background-color: transparent; color: var(--white); border: 1px solid var(--white); }
+.btn-outline:hover { background-color: var(--white); color: var(--primary-blue); }
+
+.btn-danger { background-color: var(--danger); color: var(--white); }
+.btn-danger:hover { background-color: #C0392B; }
+
+.btn-success { background-color: var(--success); color: var(--white); }
+.btn-success:hover { background-color: #1E8449; }
+
+/* الحقول (Inputs) موحدة الشكل */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #BDC3C7;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #FDFEFE;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--secondary-blue);
+    outline: none;
+    box-shadow: 0 0 8px rgba(41, 128, 185, 0.2);
+}
+
+/* =========================================
+   4. النوافذ العائمة (Modals) - حل الحجم والمكان
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px); /* يضيف تغبيش جميل للخلفية */
+    z-index: 999;
+    display: none;
+}
+
+.auth-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* يضمن التمركز 100% في المنتصف */
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    z-index: 1000;
+    display: none;
+    width: 90%;
+    max-width: 450px; /* حجم مناسب غير مبالغ فيه */
+    max-height: 85vh; /* يمنع النافذة من الالتصاق بالشاشة العلوية والسفلية */
+    overflow-y: auto; /* يضيف شريط تمرير داخلي إذا كثرت البيانات */
+    border-top: 6px solid var(--secondary-blue);
+}
+
+.auth-modal h3 {
+    color: var(--primary-blue);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* =========================================
+   5. تقويم الجدول الزمني (Calendar)
+   ========================================= */
+.table-responsive {
+    width: 95%;
+    max-width: 1200px;
+    margin: 30px auto;
+    overflow-x: auto;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--bg-light);
+}
+
+.month-title {
+    color: var(--primary-blue);
+    margin: 0;
+    font-size: 24px;
+}
+
+.tab {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* يمنع انضغاط الجدول في الجوال */
+}
+
+.tab th {
+    background-color: var(--bg-light);
+    color: var(--primary-blue);
+    padding: 15px;
+    font-size: 16px;
+    border-bottom: 3px solid var(--secondary-blue);
+}
+
+.tab td {
+    height: 120px;
+    width: 14.28%;
+    vertical-align: top;
+    padding: 10px;
+    border: 1px solid #EAEDED;
+    transition: background 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.tab td:hover {
+    background-color: #F4F6F7;
+}
+
+.date-number {
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: var(--white);
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-badge {
+    color: white;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.task-badge:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   6. التذييل (Footer)
+   ========================================= */
+footer {
+    background-color: var(--text-dark);
+    color: var(--white);
+    text-align: center;
+    padding: 20px;
+    margin-top: auto; /* يدفعه لأسفل الصفحة دائماً */
+    font-size: 14px;
+}
+
+/* =========================================
+   7. شاشات الجوال (Responsive)
+   ========================================= */
+@media screen and (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    .user-profile-header {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .calendar-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .month-title {
+        order: -1;
+    }
+}
